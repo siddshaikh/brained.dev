@@ -7,16 +7,19 @@ import { useSelector } from "react-redux";
 const Navigation = () => {
   const cart = useSelector((state) => state.cart.cartItems);
   return (
-    <div className="border-b py-4 px-6 sticky top-0 flex items-center justify-between z-50 bg-black">
+    <div className="border-b py-4 px-6 sticky top-0 flex items-center justify-between z-50 bg-black text-white">
       {/* title */}
       <Link href={"/"}>
         <h1 className="font-bold text-2xl tracking-wide">Ecom</h1>
       </Link>
 
       {/* page */}
-      <ul>
+      <ul className="flex items-center gap-4">
         <Link href={"/"}>
           <li>Products</li>
+        </Link>
+        <Link href={"/contact-us"}>
+          <li>Contact us</li>
         </Link>
       </ul>
 
