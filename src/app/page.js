@@ -7,6 +7,10 @@ import useData from "@/data/useData";
 export default function Home() {
   const { data, loading, error, currentPage, setCurrentPage, totalPages } =
     useData(20);
+
+  if (loading) {
+    return <div className="text-center">Please wait for moment...</div>;
+  }
   if (error) {
     return <div className="text-center">Error while loading page.</div>;
   }

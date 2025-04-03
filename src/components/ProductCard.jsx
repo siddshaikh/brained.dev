@@ -1,8 +1,23 @@
+"use client";
+import { addToCart, removeFromCart } from "@/store/features/cart/cartSlice";
 import Link from "next/link";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ProductCard = ({ product }) => {
   const { title, price, thumbnail, description } = product;
+
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.cartItems);
+  const isInCart = cart.some((item) => item.id === product?.id);
+
+  const handleCartAction = () => {
+    if (isInCart) {
+      dispatch(removeFromCart(product.id));
+    } else {
+      dispatch(addToCart({ ...product, quantity: 1 }));
+    }
+  };
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl p-4">
@@ -19,17 +34,24 @@ const ProductCard = ({ product }) => {
         <p className="text-sm text-gray-600 truncate">{description}</p>
         <h3 className="text-xl font-semibold text-purple-600 mt-2">${price}</h3>
 
-        <div className="flex items-center gap-4">
-          {/* Add to Cart Button */}
-          <button className="mt-4 w-full bg-purple-600 text-white font-semibold py-2 rounded-lg hover:bg-purple-700 transition-all">
-            Add to Cart
-          </button>
-          {/* link to product details */}
-          <Link
-            className="mt-4 w-full bg-purple-600 text-white font-semibold py-2 rounded-lg hover:bg-purple-700 transition-all text-center"
-            href={`/product-details/${product?.id}`}
+        <div className="flex items-center gap-2">
+          {/* Add/Remove from Cart Button */}
+          <button
+            onClick={handleCartAction}
+            className={`flex items-center justify-center rounded-md w-full text-sm font-semibold gap-2 transition-all h-10 px-3 whitespace-nowrap ${
+              isInCart
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-purple-600 text-white hover:bg-purple-700"
+            }`}
           >
-            Product Details
+            {isInCart ? "Remove" : "Add to Cart"}
+          </button>
+
+          {/* Link to Product Details */}
+          <Link href={`/product-details/${product?.id}`} className="w-full">
+            <button className="w-full bg-purple-600 text-white font-semibold text-sm h-10 px-3 rounded-md hover:bg-purple-700 transition-all text-center whitespace-nowrap">
+              Details
+            </button>
           </Link>
         </div>
       </div>

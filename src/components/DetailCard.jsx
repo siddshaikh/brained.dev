@@ -1,10 +1,9 @@
 "use client";
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ShoppingBag, Star } from "lucide-react";
-import { addToCart } from "@/store/features/cart/cartSlice";
+import { addToCart, removeFromCart } from "@/store/features/cart/cartSlice";
 
 const DetailCard = ({ id }) => {
   const [product, setProduct] = useState(null);
@@ -12,6 +11,8 @@ const DetailCard = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.cartItems);
+  const isInCart = cart.some((item) => item.id === product?.id);
 
   useEffect(() => {
     if (!id) return;
@@ -30,8 +31,12 @@ const DetailCard = ({ id }) => {
     fetchSingleProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    dispatch(addToCart({ ...product, quantity }));
+  const handleCartAction = () => {
+    if (isInCart) {
+      dispatch(removeFromCart(product.id));
+    } else {
+      dispatch(addToCart({ ...product, quantity }));
+    }
   };
 
   if (loading) return <p className="text-gray-500 text-center">Loading...</p>;
@@ -139,11 +144,15 @@ const DetailCard = ({ id }) => {
 
           {/* Add to Cart Button */}
           <button
-            onClick={handleAddToCart}
-            className="flex items-center justify-center bg-purple-600 text-white px-6 py-3 mt-6 rounded-md w-full text-lg font-semibold gap-2 hover:bg-purple-700 transition"
+            onClick={handleCartAction}
+            className={`flex items-center justify-center px-6 py-3 mt-6 rounded-md w-full text-lg font-semibold gap-2 transition ${
+              isInCart
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-purple-600 text-white hover:bg-purple-700"
+            }`}
           >
             <ShoppingBag />
-            Add to Cart
+            {isInCart ? "Remove from Cart" : "Add to Cart"}
           </button>
         </div>
       </div>
